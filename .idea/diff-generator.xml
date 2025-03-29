@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DiffGenerationConfig" isInitGenerateDdl="true">
+    <option name="initGenerateDdl" value="true" />
+    <option name="snapshotDb" value="false" />
+    <option name="snapshotModelValue" value="user-service:user-service" />
+    <option name="sourceModelValue" value="user-service:user-service" />
+    <option name="targetDbValue" value="c4401cff-477e-46e4-b2f2-ce140a1a1e88" />
+  </component>
+</project>

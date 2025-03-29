@@ -109,14 +109,6 @@
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
-                <dependencies>
-                    <!-- Зависимость от драйвера базы данных для плагина -->
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.7.5</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
