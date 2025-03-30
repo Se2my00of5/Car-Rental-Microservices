@@ -5,6 +5,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="/db/changelog/changes/changes-1.xml"/>
-    <include file="db/changelog/changes/changes-2.xml"/>
+
+    <changeSet id="1743334036816-1" author="Se2my00of5">
+        <addColumn tableName="users">
+            <column name="is_active" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1743334036816-2" author="Se2my00of5">
+        <addNotNullConstraint columnName="is_active" tableName="users"/>
+    </changeSet>
 </databaseChangeLog>
