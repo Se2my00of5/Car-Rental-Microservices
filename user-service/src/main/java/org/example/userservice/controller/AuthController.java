@@ -6,6 +6,7 @@ import org.example.userservice.dto.UserDTO;
 import org.example.userservice.exception.NotFoundException;
 import org.example.userservice.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
