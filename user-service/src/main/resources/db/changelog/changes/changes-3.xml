@@ -15,4 +15,5 @@
     <changeSet id="1743413300551-3" author="Se2my00of5">
         <modifyDataType columnName="username" newDataType="VARCHAR(50)" tableName="users"/>
     </changeSet>
+
 </databaseChangeLog>

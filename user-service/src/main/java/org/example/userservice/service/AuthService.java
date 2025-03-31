@@ -12,6 +12,7 @@ import org.example.userservice.repository.UserRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -113,4 +114,7 @@ public class AuthService {
     }
 
 
+    public Boolean validateAccessToken(UserDTO.Request.AccessToken token) {
+        return jwtProvider.validateAccessToken(token.getAccessToken());
+    }
 }

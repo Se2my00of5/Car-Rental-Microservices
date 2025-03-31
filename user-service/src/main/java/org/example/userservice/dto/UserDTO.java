@@ -76,6 +76,14 @@ public enum UserDTO {;
             @Schema(description = "Refresh токен", example = "eyJhbGciOiJIUzI1NiIsInR...")
             String refreshToken;
         }
+
+        @Value
+        public static class AccessToken implements UserDTO.AccessToken {
+
+            @NotBlank
+            @Schema(description = "Access токен", example = "eyJhbGciOiJIUzI1NiIsInR...")
+            String accessToken;
+        }
     }
 
     public enum Response {;
