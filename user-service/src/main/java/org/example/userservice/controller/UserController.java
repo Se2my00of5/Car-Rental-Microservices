@@ -19,7 +19,7 @@ public class UserController {
 
     // Получение своего профиля
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO.Response.Profile> getMyProfile(@RequestBody String accessToken) {
+    public ResponseEntity<UserDTO.Response.Profile> getMyProfile() {
         return ResponseEntity.ok(userService.getMyProfile());
     }
 
