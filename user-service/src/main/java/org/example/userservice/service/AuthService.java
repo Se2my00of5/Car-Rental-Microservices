@@ -6,13 +6,11 @@ import org.example.userservice.dto.UserDTO;
 import org.example.userservice.exception.AuthenticationException;
 import org.example.userservice.exception.BadRequestException;
 import org.example.userservice.exception.NotFoundException;
-import org.example.userservice.model.Role;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.RoleRepository;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -29,41 +27,41 @@ public class AuthService {
     private final JwtProvider jwtProvider;
 
     public UserDTO.Response.TokenAndShortUserInfo login(
-            @NonNull UserDTO.Request.Login authRequest)
-    {
+            @NonNull UserDTO.Request.Login authRequest
+    ) {
         final User user = userRepository.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         if (user.getPassword().equals(authRequest.getPassword())) {
-            if (!user.isActive()){
+            if (!user.isActive()) {
                 throw new NotFoundException("Аккаунт удалён");
             }
 
             final String accessToken = jwtProvider.generateAccessToken(user);
             final String refreshToken = jwtProvider.generateRefreshToken(user);
             refreshStorage.put(user.getEmail(), refreshToken);
+
             return new UserDTO.Response.TokenAndShortUserInfo(accessToken, refreshToken, user.getId(), user.getEmail(), user.getPassword());
         } else {
             throw new BadRequestException("Неправильный пароль");
-
         }
     }
 
     public UserDTO.Response.TokenAndShortUserInfo registration(
             @NonNull UserDTO.Request.Register userData
-    ){
-        if(userRepository.findByEmail(userData.getEmail()).isPresent()) {
+    ) {
+        if (userRepository.findByEmail(userData.getEmail()).isPresent()) {
             throw new BadRequestException("этот email уже занят");
         }
 
-        Role newUserRole =  Role.builder().name("ROLE_USER").build();
-        roleRepository.save(newUserRole);
 
         User user = User.builder()
                 .username(userData.getUsername())
                 .email(userData.getEmail())
                 .password(userData.getPassword())
-                .roles(Set.of(newUserRole))
+                .roles(Set.of(roleRepository.findByName("ROLE_USER")
+                        .orElseThrow(() -> new BadRequestException("такой роли нет")))
+                )
                 .isActive(true)
                 .build();
 
@@ -77,7 +75,9 @@ public class AuthService {
     }
 
 
-    public String getAccessToken(@NonNull String refreshToken) {
+    public UserDTO.Response.GetToken getAccessToken(@NonNull UserDTO.Request.RefreshToken token) {
+        String refreshToken = token.getRefreshToken();
+
         if (jwtProvider.validateRefreshToken(refreshToken)) {
             final Claims claims = jwtProvider.getRefreshClaims(refreshToken);
             final String email = claims.getSubject();
@@ -85,15 +85,15 @@ public class AuthService {
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
                 final User user = userRepository.findByEmail(email)
                         .orElseThrow(() -> new AuthenticationException("invalid token"));
-                return jwtProvider.generateAccessToken(user);
+                return new UserDTO.Response.GetToken(jwtProvider.generateAccessToken(user));
             }
             throw new AuthenticationException("invalid token");
         }
         throw new AuthenticationException("invalid token");
     }
 
-    public String deactivateAccount(){
-        String email =(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserDTO.Response.GetMessage deactivateAccount() {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -101,14 +101,16 @@ public class AuthService {
         user.setActive(false);
         userRepository.save(user);
 
-        return "success";
+        return new UserDTO.Response.GetMessage("success");
     }
 
-    public String logout(){
-        String email =(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserDTO.Response.GetMessage logout() {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         refreshStorage.remove(email);
 
-        return "success";
+        return new UserDTO.Response.GetMessage("success");
     }
+
+
 }

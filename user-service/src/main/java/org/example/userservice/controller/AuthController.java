@@ -1,12 +1,13 @@
 package org.example.userservice.controller;
 
-import jakarta.security.auth.message.AuthException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.userservice.dto.UserDTO;
-import org.example.userservice.exception.NotFoundException;
 import org.example.userservice.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("login")
+    @Operation(summary = "Логин", security = {})
     public ResponseEntity<UserDTO.Response.TokenAndShortUserInfo> login(
             @RequestBody UserDTO.Request.Login authRequest
     ) {
@@ -24,27 +26,29 @@ public class AuthController {
     }
 
     @PostMapping("register")
+    @Operation(summary = "Регистрация", security = {})
     public ResponseEntity<UserDTO.Response.TokenAndShortUserInfo> register(
-            @RequestBody UserDTO.Request.Register authRequest
+            @Valid @RequestBody UserDTO.Request.Register authRequest
     ) {
         return ResponseEntity.ok(authService.registration(authRequest));
     }
 
     @PostMapping("new-access")
-    public ResponseEntity<String> getNewAccessToken(@RequestBody String refreshToken
-    ) {
-        return ResponseEntity.ok(authService.getAccessToken(refreshToken));
+    @Operation(summary = "Получение нового access токена", security = {})
+    public ResponseEntity<UserDTO.Response.GetToken> getNewAccessToken(@RequestBody UserDTO.Request.RefreshToken token) {
+        return ResponseEntity.ok(authService.getAccessToken(token));
     }
 
-    // Удаление пользователя (перевод в неактивное состояние)
     @GetMapping("/unactivate")
-    public ResponseEntity<String> deactivateAccount() {
+    @Operation(summary = "Деактивация аккаунта", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<UserDTO.Response.GetMessage> deactivateAccount() {
         return ResponseEntity.ok(authService.deactivateAccount());
     }
 
-    // Получение своего профиля
     @GetMapping("/logout")
-    public ResponseEntity<String> logout() {
+    @Operation(summary = "Выход из аккаунта", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<UserDTO.Response.GetMessage> logout() {
         return ResponseEntity.ok(authService.logout());
     }
+
 }

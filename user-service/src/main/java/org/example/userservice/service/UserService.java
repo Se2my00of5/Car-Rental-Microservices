@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -60,7 +61,21 @@ public class UserService {
                 user.getPassword(), user.getRoles()
         );
     }
+    @Transactional
+    public UserDTO.Response.GetMessage deleteUser(Long id) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("нет такого пользователя"));
 
+        // Удаляем связи с ролями (очищаем Set)
+        user.getRoles().clear();
 
+        // Сохраняем обновлённого пользователя
+        repository.save(user);
+
+        // Теперь можно безопасно удалить пользователя
+        repository.delete(user);
+
+        return new UserDTO.Response.GetMessage("success");
+    }
 
 }

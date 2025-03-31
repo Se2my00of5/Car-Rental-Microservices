@@ -1,10 +1,9 @@
 package org.example.userservice.controller;
 
-import jakarta.security.auth.message.AuthException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.example.userservice.dto.UserDTO;
-import org.example.userservice.exception.NotFoundException;
-import org.example.userservice.service.AuthService;
 import org.example.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,23 +16,22 @@ public class UserController {
 
     private final UserService userService;
 
-    // Получение своего профиля
     @GetMapping("/profile")
+    @Operation(summary = "Получение своего профиля", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserDTO.Response.Profile> getMyProfile() {
         return ResponseEntity.ok(userService.getMyProfile());
     }
 
-    // Редактирование профиля
     @PutMapping("/profile")
+    @Operation(summary = "Редактирование профиля", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserDTO.Response.Profile> updateProfile(@RequestBody UserDTO.Request.EditProfile userData) {
         return ResponseEntity.ok(userService.updateProfile(userData));
     }
 
-    // Получение профиля по ID
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/profile/{id}")
-    public ResponseEntity<UserDTO.Response.Profile> getProfileById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getProfileById(id));
-    }
+//    @PutMapping("/delete/{id}")
+//    @Operation(summary = "Удаление пользователя", security = @SecurityRequirement(name = "bearerAuth"))
+//    public UserDTO.Response.GetMessage deleteUser(@PathVariable Long id) {
+//        return userService.deleteUser(id);
+//    }
 
 }
