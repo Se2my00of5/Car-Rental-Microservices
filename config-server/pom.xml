@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.example</groupId>
-	<artifactId>api-gateway</artifactId>
+	<artifactId>config-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>api-gateway</name>
-	<description>api-gateway</description>
+	<name>config-server</name>
+	<description>config-server</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -33,16 +33,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-gateway</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
-		<!-- MDC (логирование) -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<artifactId>spring-cloud-config-server</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

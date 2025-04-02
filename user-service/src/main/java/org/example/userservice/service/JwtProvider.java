@@ -5,9 +5,11 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.userservice.model.RefreshToken;
 import org.example.userservice.model.User;
+import org.example.userservice.repository.RefreshTokenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -15,29 +17,29 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 @Slf4j
 @Component
-
 public class JwtProvider {
     private final SecretKey jwtAccessSecret;
     private final SecretKey jwtRefreshSecret;
     private final long jwtAccessExpiration;
     private final long jwtRefreshExpiration;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public JwtProvider(
             @Value("${jwt.secret.access}") String jwtAccessSecret,
             @Value("${jwt.secret.refresh}") String jwtRefreshSecret,
             @Value("${jwt.expiration.access}") long jwtAccessExpiration,
-            @Value("${jwt.expiration.refresh}") long jwtRefreshExpiration
+            @Value("${jwt.expiration.refresh}") long jwtRefreshExpiration,
+            RefreshTokenRepository refreshTokenRepository
     ) {
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
         this.jwtAccessExpiration = jwtAccessExpiration;
         this.jwtRefreshExpiration = jwtRefreshExpiration;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     public String generateAccessToken(@NonNull User user) {
@@ -55,11 +57,13 @@ public class JwtProvider {
     public String generateRefreshToken(@NonNull User user) {
         final Instant refreshExpirationInstant = Instant.now().plusSeconds(jwtRefreshExpiration);
         final Date refreshExpiration = Date.from(refreshExpirationInstant);
-        return Jwts.builder()
+        final String token = Jwts.builder()
                 .setSubject(user.getEmail())
                 .setExpiration(refreshExpiration)
                 .signWith(jwtRefreshSecret)
                 .compact();
+        refreshTokenRepository.save(new RefreshToken(token));
+        return token;
     }
 
     public boolean validateAccessToken(@NonNull String accessToken) {

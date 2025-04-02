@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+    <changeSet id="1743595537584-4" author="Se2my00of5">
+        <createTable tableName="refresh_token">
+            <column name="refresh_token" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="pk_refresh_token"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1743595537584-1" author="Se2my00of5">
+        <modifyDataType columnName="email" newDataType="VARCHAR(127)" tableName="users"/>
+    </changeSet>
+    <changeSet id="1743595537584-2" author="Se2my00of5">
+        <modifyDataType columnName="password" newDataType="VARCHAR(50)" tableName="users"/>
+    </changeSet>
+    <changeSet id="1743595537584-3" author="Se2my00of5">
+        <modifyDataType columnName="username" newDataType="VARCHAR(50)" tableName="users"/>
+    </changeSet>
+</databaseChangeLog>
