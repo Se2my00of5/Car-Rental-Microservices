@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import:
+      - optional:configserver:http://localhost:8888/jwt
+  cloud:
+    gateway:
+      routes:
+        - id: user-service-admin
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/admin/**
+          filters:
+            - JwtCheck
+            - AdminRoleCheck
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - JwtCheck
+          metadata:
+            publicPaths:
+              - /user-service/auth/register
+              - /user-service/auth/login
+              - /user-service/auth/new-access
+              - /user-service/auth/validate-access-token
+      discovery:
+        locator:
+          lower-case-service-id: true
+
+
+server:
+  port: 8765
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+
+

@@ -6,3 +6,6 @@ spring:
       - optional:configserver:http://localhost:8888/maindb-database
       - optional:configserver:http://localhost:8888/jwt
       - optional:configserver:http://localhost:8888/common-client-service
+server:
+  servlet:
+    context-path: /user-service
