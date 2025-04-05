@@ -8,7 +8,6 @@ import org.example.userservice.dto.UserDTO;
 import org.example.userservice.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,21 +41,21 @@ public class AuthController {
 
     @GetMapping("/unactivate")
     @Operation(summary = "Деактивация аккаунта", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<UserDTO.Response.GetMessage> deactivateAccount() {
-        return ResponseEntity.ok(authService.deactivateAccount());
+    public ResponseEntity<UserDTO.Response.GetMessage> deactivateAccount(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(authService.deactivateAccount(authHeader));
     }
 
     @GetMapping("/logout")
     @Operation(summary = "Выход из аккаунта", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<UserDTO.Response.GetMessage> logout() {
-        return ResponseEntity.ok(authService.logout());
+    public ResponseEntity<UserDTO.Response.GetMessage> logout(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(authService.logout(authHeader));
     }
 
     @PostMapping("/validate-access-token")
     @Operation(summary = "Валидация токена")
     public ResponseEntity<UserDTO.Response.GetMessage> validateAccessToken(@RequestBody UserDTO.Request.AccessToken token) {
         final boolean isValid = authService.validateAccessToken(token);
-        return isValid?ResponseEntity.ok(new UserDTO.Response.GetMessage("токен валидный")):
+        return isValid ? ResponseEntity.ok(new UserDTO.Response.GetMessage("токен валидный")) :
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new UserDTO.Response.GetMessage("токен невалидный"));
     }
 

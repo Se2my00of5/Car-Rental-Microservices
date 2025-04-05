@@ -8,7 +8,6 @@ import org.example.userservice.model.Role;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.RoleRepository;
 import org.example.userservice.repository.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

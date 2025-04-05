@@ -9,3 +9,7 @@ spring:
 server:
   servlet:
     context-path: /user-service
+
+springdoc:
+  api-docs:
+    path: v3/api-docs

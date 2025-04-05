@@ -10,18 +10,11 @@ import org.example.userservice.model.Role;
 
 import java.util.Set;
 
-public enum UserDTO {;
-    private interface Id { @Positive Long getId(); }
-    private interface Username { @NotBlank String getUsername(); }
-    private interface Password { @NotBlank @Size(min = 6) String getPassword(); }
-    private interface Email { @jakarta.validation.constraints.Email String getEmail(); }
-    private interface Roles { @NotNull Set<Role> getRoles(); }
-    private interface IsActive { @NotNull Boolean getIsActive(); }
-    private interface AccessToken { @NotBlank String getAccessToken(); }
-    private interface RefreshToken { @NotBlank String getRefreshToken(); }
-    private interface Message { @NotBlank String getMessage(); }
+public enum UserDTO {
+    ;
 
-    public enum Request {;
+    public enum Request {
+        ;
 
         @Value
         public static class Register implements Username, Email, Password {
@@ -86,7 +79,8 @@ public enum UserDTO {;
         }
     }
 
-    public enum Response {;
+    public enum Response {
+        ;
 
         @Value
         public static class TokenAndShortUserInfo implements AccessToken, RefreshToken, Id, Email, Password {
@@ -155,5 +149,51 @@ public enum UserDTO {;
             @Schema(description = "Access токен", example = "eyJhbGciOiJIUzI1NiIsInR...")
             String accessToken;
         }
+    }
+
+    private interface Id {
+        @Positive
+        Long getId();
+    }
+
+    private interface Username {
+        @NotBlank
+        String getUsername();
+    }
+
+    private interface Password {
+        @NotBlank
+        @Size(min = 6)
+        String getPassword();
+    }
+
+    private interface Email {
+        @jakarta.validation.constraints.Email
+        String getEmail();
+    }
+
+    private interface Roles {
+        @NotNull
+        Set<Role> getRoles();
+    }
+
+    private interface IsActive {
+        @NotNull
+        Boolean getIsActive();
+    }
+
+    private interface AccessToken {
+        @NotBlank
+        String getAccessToken();
+    }
+
+    private interface RefreshToken {
+        @NotBlank
+        String getRefreshToken();
+    }
+
+    private interface Message {
+        @NotBlank
+        String getMessage();
     }
 }

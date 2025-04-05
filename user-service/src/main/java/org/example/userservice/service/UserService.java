@@ -1,18 +1,11 @@
 package org.example.userservice.service;
 
-import io.jsonwebtoken.Claims;
-import jakarta.security.auth.message.AuthException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.example.userservice.dto.UserDTO;
-import org.example.userservice.exception.AuthenticationException;
 import org.example.userservice.exception.NotFoundException;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.UserRepository;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +15,8 @@ public class UserService {
     private final UserRepository repository;
     private final JwtProvider jwtProvider;
 
-    public UserDTO.Response.Profile getMyProfile() {
-        String email =(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserDTO.Response.Profile getMyProfile(String authHeader) {
+        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));
 
         final User user = repository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -34,8 +27,8 @@ public class UserService {
     }
 
 
-    public UserDTO.Response.Profile updateProfile(@NonNull UserDTO.Request.EditProfile userData) {
-        String email =(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserDTO.Response.Profile updateProfile(String authHeader, @NonNull UserDTO.Request.EditProfile userData) {
+        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));;
 
         final User user = repository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -61,6 +54,7 @@ public class UserService {
                 user.getPassword(), user.getRoles()
         );
     }
+
     @Transactional
     public UserDTO.Response.GetMessage deleteUser(Long id) {
         User user = repository.findById(id)

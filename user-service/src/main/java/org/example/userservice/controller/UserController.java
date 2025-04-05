@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.userservice.dto.UserDTO;
 import org.example.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +17,17 @@ public class UserController {
 
     @GetMapping("/profile")
     @Operation(summary = "Получение своего профиля", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<UserDTO.Response.Profile> getMyProfile() {
-        return ResponseEntity.ok(userService.getMyProfile());
+    public ResponseEntity<UserDTO.Response.Profile> getMyProfile(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(userService.getMyProfile(authHeader));
     }
 
     @PutMapping("/profile")
     @Operation(summary = "Редактирование профиля", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<UserDTO.Response.Profile> updateProfile(@RequestBody UserDTO.Request.EditProfile userData) {
-        return ResponseEntity.ok(userService.updateProfile(userData));
+    public ResponseEntity<UserDTO.Response.Profile> updateProfile(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody UserDTO.Request.EditProfile userData)
+    {
+        return ResponseEntity.ok(userService.updateProfile(authHeader, userData));
     }
 
 //    @PutMapping("/delete/{id}")

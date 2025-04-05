@@ -1,8 +1,10 @@
 package org.example.userservice.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "roles")
@@ -10,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Role implements GrantedAuthority {
+public class Role {// implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -20,8 +22,8 @@ public class Role implements GrantedAuthority {
     private String name;
 
     // Реализация метода из GrantedAuthority
-    @Override
-    public String getAuthority() {
-        return name;
-    }
+//    @Override
+//    public String getAuthority() {
+//        return name;
+//    }
 }

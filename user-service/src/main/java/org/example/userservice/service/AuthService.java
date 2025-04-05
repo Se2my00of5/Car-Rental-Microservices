@@ -10,9 +10,7 @@ import org.example.userservice.model.User;
 import org.example.userservice.repository.RoleRepository;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,8 +91,8 @@ public class AuthService {
         throw new AuthenticationException("invalid token");
     }
 
-    public UserDTO.Response.GetMessage deactivateAccount() {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserDTO.Response.GetMessage deactivateAccount(String authHeader) {
+        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));
 
         final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -105,8 +103,8 @@ public class AuthService {
         return new UserDTO.Response.GetMessage("success");
     }
 
-    public UserDTO.Response.GetMessage logout() {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UserDTO.Response.GetMessage logout(String authHeader) {
+        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));
 
         refreshStorage.remove(email);
 
