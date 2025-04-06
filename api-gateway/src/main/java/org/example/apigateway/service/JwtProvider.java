@@ -42,19 +42,19 @@ public class JwtProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
-            log.error("Token expired", expEx);
+            //log.error("Token expired", expEx);
             throw new AuthenticationException("Token expired");
         } catch (UnsupportedJwtException unsEx) {
-            log.error("Unsupported jwt", unsEx);
+            //log.error("Unsupported jwt", unsEx);
             throw new AuthenticationException("Unsupported jwt");
         } catch (MalformedJwtException mjEx) {
-            log.error("Malformed jwt", mjEx);
+            //log.error("Malformed jwt", mjEx);
             throw new AuthenticationException("Malformed jwt");
         } catch (SignatureException sEx) {
-            log.error("Invalid signature", sEx);
+            //log.error("Invalid signature", sEx);
             throw new AuthenticationException("Invalid signature");
         } catch (Exception e) {
-            log.error("invalid token", e);
+            //log.error("invalid token", e);
             throw new AuthenticationException("invalid token");
         }
     }

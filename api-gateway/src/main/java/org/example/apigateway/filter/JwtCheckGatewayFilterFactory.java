@@ -68,7 +68,7 @@ public class JwtCheckGatewayFilterFactory extends AbstractGatewayFilterFactory<J
             }
 
             String token = authHeader.substring(7);
-            log.info("JWT Token: {}", token);
+            //log.info("JWT Token: {}", token);
             // Проверяем валидность токена
             jwtProvider.validateAccessToken(token);
 
