@@ -1,4 +1,4 @@
-package org.example.userservice.config;
+package org.example.carservice.config;
 
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,7 @@ import java.util.List;
 )
 public class SwaggerConfig {
 
-    @Value("${gateway.url}/user-service")
+    @Value("${gateway.url}/car-service")
     private String gatewayUrl;
 
     @Bean
