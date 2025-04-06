@@ -1,6 +1,7 @@
 package org.example.userservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,13 +42,13 @@ public class AuthController {
 
     @GetMapping("/unactivate")
     @Operation(summary = "Деактивация аккаунта", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<UserDTO.Response.GetMessage> deactivateAccount(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<UserDTO.Response.GetMessage> deactivateAccount(@Parameter(hidden = true) @RequestHeader("Authorization") String authHeader) {
         return ResponseEntity.ok(authService.deactivateAccount(authHeader));
     }
 
     @GetMapping("/logout")
     @Operation(summary = "Выход из аккаунта", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<UserDTO.Response.GetMessage> logout(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<UserDTO.Response.GetMessage> logout(@Parameter(hidden = true) @RequestHeader("Authorization") String authHeader) {
         return ResponseEntity.ok(authService.logout(authHeader));
     }
 

@@ -1,24 +1,21 @@
 spring:
   application:
-    name: user-service
+    name: car-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/maindb
+    url: jdbc:postgresql://localhost:5432/car_db
   config:
     import:
       - optional:configserver:http://localhost:8888/common-database
-      - optional:configserver:http://localhost:8888/jwt
       - optional:configserver:http://localhost:8888/common-client-service
-      - optional:configserver:http://localhost:8888/gateway-url
+
+
 server:
   servlet:
-    context-path: /user-service
+    context-path: /car-service
 
 springdoc:
   api-docs:
     path: v3/api-docs
-
-
-
 
 
 

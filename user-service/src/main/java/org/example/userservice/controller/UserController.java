@@ -1,6 +1,7 @@
 package org.example.userservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.example.userservice.dto.UserDTO;
@@ -17,20 +18,20 @@ public class UserController {
 
     @GetMapping("/profile")
     @Operation(summary = "Получение своего профиля", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<UserDTO.Response.Profile> getMyProfile(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<UserDTO.Response.Profile> getMyProfile(@Parameter(hidden = true) @RequestHeader("Authorization") String authHeader) {
         return ResponseEntity.ok(userService.getMyProfile(authHeader));
     }
 
     @PutMapping("/profile")
     @Operation(summary = "Редактирование профиля", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserDTO.Response.Profile> updateProfile(
-            @RequestHeader("Authorization") String authHeader,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String authHeader,
             @RequestBody UserDTO.Request.EditProfile userData)
     {
         return ResponseEntity.ok(userService.updateProfile(authHeader, userData));
     }
 
-//    @PutMapping("/delete/{id}")
+//    @PostMapping("/delete/{id}")
 //    @Operation(summary = "Удаление пользователя", security = @SecurityRequirement(name = "bearerAuth"))
 //    public UserDTO.Response.GetMessage deleteUser(@PathVariable Long id) {
 //        return userService.deleteUser(id);
