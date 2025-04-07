@@ -1,4 +1,4 @@
-package org.example.userservice.dto;
+package dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

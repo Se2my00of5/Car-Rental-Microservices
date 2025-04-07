@@ -1,6 +1,9 @@
 package org.example.userservice.exception;
 
-import org.example.userservice.dto.SimpleErrorResponseDTO;
+import dto.SimpleErrorResponseDTO;
+import exception.AuthenticationException;
+import exception.BadRequestException;
+import exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

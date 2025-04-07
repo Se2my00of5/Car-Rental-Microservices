@@ -1,9 +1,9 @@
 package org.example.userservice.service;
 
+import exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.example.userservice.dto.UserDTO;
-import org.example.userservice.exception.NotFoundException;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class UserService {
     private final JwtProvider jwtProvider;
 
     public UserDTO.Response.Profile getMyProfile(String authHeader) {
-        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));
+        String email = jwtProvider.getEmailFromAuthHeader(authHeader);
 
         final User user = repository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -28,7 +28,7 @@ public class UserService {
 
 
     public UserDTO.Response.Profile updateProfile(String authHeader, @NonNull UserDTO.Request.EditProfile userData) {
-        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));;
+        String email = jwtProvider.getEmailFromAuthHeader(authHeader);
 
         final User user = repository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));

@@ -1,4 +1,4 @@
-package org.example.userservice.exception;
+package exception;
 
 // 401 - Unauthorized
 public class AuthenticationException extends RuntimeException {

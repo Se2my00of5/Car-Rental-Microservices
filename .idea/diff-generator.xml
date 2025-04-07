@@ -4,7 +4,7 @@
     <option name="initGenerateDdl" value="true" />
     <option name="snapshotDb" value="false" />
     <option name="snapshotModelValue" value="car-service:car-service" />
-    <option name="sourceModelValue" value="user-service:user-service" />
-    <option name="targetDbValue" value="c4401cff-477e-46e4-b2f2-ce140a1a1e88" />
+    <option name="sourceModelValue" value="car-service:car-service" />
+    <option name="targetDbValue" value="b032bf66-ceaf-4ffd-9eb2-f975f0d2cd8b" />
   </component>
 </project>

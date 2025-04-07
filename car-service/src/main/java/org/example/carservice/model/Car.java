@@ -40,12 +40,18 @@ public class Car {
     @Column(nullable = false)
     private int year;
 
+    @Pattern(
+            regexp = "^[A-Z]{1}\\d{3}[A-Z]{2}\\d{2,3}$",
+            message = "Номер автомобиля должен быть в формате A123BC77"
+    )
+    @Column(nullable = false, unique = true, length = 15)
+    private String licensePlateNumber;
+
     @NotNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CarStatus status;
 
-    @NotNull
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

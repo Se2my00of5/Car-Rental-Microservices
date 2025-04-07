@@ -14,7 +14,7 @@ public enum CarDTO {
         ;
 
         @Value
-        public static class Create implements Brand, Model, Color, Year, Status, UserEmail {
+        public static class Create implements Brand, Model, Color, Year, LicensePlateNumber {
 
             @NotBlank
             @Schema(description = "Бренд автомобиля", example = "Toyota")
@@ -33,18 +33,17 @@ public enum CarDTO {
             @Schema(description = "Год выпуска", example = "2020")
             int year;
 
-            @NotNull
-            @Schema(description = "Статус автомобиля", example = "AVAILABLE")
-            CarStatus status;
+            @Pattern(
+                    regexp = "^[A-Z]{1}\\d{3}[A-Z]{2}\\d{2,3}$",
+                    message = "Номер автомобиля должен быть в формате A123BC77"
+            )
+            @Schema(description = "Автомобильный номер", example = "A123BC77")
+            String licensePlateNumber;
 
-            @NotBlank
-            @Email
-            @Schema(description = "Email пользователя, создавшего запись", example = "user@example.com")
-            String userEmail;
         }
 
         @Value
-        public static class Update implements Brand, Model, Color, Year, Status {
+        public static class Update implements Brand, Model, Color, Year, LicensePlateNumber {
 
             @NotBlank
             @Schema(description = "Бренд автомобиля", example = "Toyota")
@@ -63,9 +62,13 @@ public enum CarDTO {
             @Schema(description = "Год выпуска", example = "2020")
             int year;
 
-            @NotNull
-            @Schema(description = "Статус автомобиля", example = "AVAILABLE")
-            CarStatus status;
+            @Pattern(
+                    regexp = "^[A-Z]{1}\\d{3}[A-Z]{2}\\d{2,3}$",
+                    message = "Номер автомобиля должен быть в формате A123BC77"
+            )
+            @Schema(description = "Автомобильный номер", example = "A123BC77")
+            String licensePlateNumber;
+
         }
     }
 
@@ -73,7 +76,7 @@ public enum CarDTO {
         ;
 
         @Value
-        public static class FullInfo implements Id, Brand, Model, Color, Year, Status, UserEmail, CreatedAt, UpdatedAt {
+        public static class FullInfo implements Id, Brand, Model, Color, Year, LicensePlateNumber, Status, UserEmail, CreatedAt, UpdatedAt {
 
             @Positive
             @Schema(description = "ID автомобиля", example = "1")
@@ -96,6 +99,13 @@ public enum CarDTO {
             @Schema(description = "Год выпуска", example = "2020")
             int year;
 
+            @Pattern(
+                    regexp = "^[A-Z]{1}\\d{3}[A-Z]{2}\\d{2,3}$",
+                    message = "Номер автомобиля должен быть в формате A123BC77"
+            )
+            @Schema(description = "Автомобильный номер", example = "A123BC77")
+            String licensePlateNumber;
+
             @NotNull
             @Schema(description = "Статус автомобиля", example = "AVAILABLE")
             CarStatus status;
@@ -112,6 +122,11 @@ public enum CarDTO {
             @PastOrPresent
             @Schema(description = "Дата последнего изменения записи", example = "2025-04-06T12:30:00")
             LocalDateTime updatedAt;
+        }
+
+        @Value
+        public static class SimpleRequest implements Message{
+            String message;
         }
     }
 
@@ -162,5 +177,18 @@ public enum CarDTO {
     public interface UpdatedAt {
         @PastOrPresent
         LocalDateTime getUpdatedAt();
+    }
+
+    public interface LicensePlateNumber {
+        @Pattern(
+                regexp = "^[A-Z]{1}\\d{3}[A-Z]{2}\\d{2,3}$",
+                message = "Номер автомобиля должен быть в формате A123BC77"
+        )
+        String getLicensePlateNumber();
+    }
+
+    public interface Message {
+        @NotBlank
+        String getMessage();
     }
 }

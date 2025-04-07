@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "My API", version = "v1")
+        info = @Info(title = "My API car-service", version = "v1")
 )
 @SecurityScheme(
         name = "bearerAuth",

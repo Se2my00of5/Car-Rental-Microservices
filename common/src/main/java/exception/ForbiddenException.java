@@ -1,4 +1,4 @@
-package org.example.apigateway.exception;
+package exception;
 
 // 401 - Forbidden
 public class ForbiddenException extends RuntimeException {

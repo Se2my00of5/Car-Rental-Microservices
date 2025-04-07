@@ -6,8 +6,11 @@ spring:
       - optional:configserver:http://localhost:8888/jwt
   cloud:
     gateway:
+      discovery:
+        locator:
+          lower-case-service-id: true
       routes:
-        - id: user-service-admin
+        - id: admin-user-service
           uri: lb://user-service
           predicates:
             - Path=/user-service/admin/**
@@ -28,9 +31,24 @@ spring:
               - /user-service/auth/new-access
               - /user-service/auth/validate-access-token
               - /user-service/v3/api-docs
-      discovery:
-        locator:
-          lower-case-service-id: true
+
+        - id: admin-car-service
+          uri: lb://car-service
+          predicates:
+            - Path=/car-service/admin/**
+          filters:
+            - JwtCheck
+            - AdminRoleCheck
+
+        - id: car-service
+          uri: lb://car-service
+          predicates:
+            - Path=/car-service/**
+          filters:
+            - JwtCheck
+          metadata:
+            publicPaths:
+              - /car-service/v3/api-docs
 
 
 server:
@@ -48,6 +66,8 @@ springdoc:
     urls:
       - name: user-service
         url: /user-service/v3/api-docs
+      - name: car-service
+        url: /car-service/v3/api-docs
   api-docs:
     enabled: true
   cache:

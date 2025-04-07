@@ -1,8 +1,9 @@
 package org.example.apigateway.filter;
 
+import exception.ForbiddenException;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.dto.Role;
-import org.example.apigateway.exception.ForbiddenException;
 import org.example.apigateway.service.JwtProvider;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+@Slf4j
 @Component
 
 public class AdminRoleCheckGatewayFilterFactory extends AbstractGatewayFilterFactory<AdminRoleCheckGatewayFilterFactory.Config> {
@@ -32,7 +34,10 @@ public class AdminRoleCheckGatewayFilterFactory extends AbstractGatewayFilterFac
 
             Set<Role> roles = jwtProvider.getRoles(claims);
 
-            if (!roles.contains("ROLE_ADMIN")) {
+            boolean isAdmin = roles
+                    .stream()
+                    .anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
+            if (!isAdmin) {
                 throw new ForbiddenException("Нет доступа");
             }
             // Прокинуть информацию дальше (опционально)

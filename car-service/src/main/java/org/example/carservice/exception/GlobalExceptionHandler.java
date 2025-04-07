@@ -1,6 +1,9 @@
 package org.example.carservice.exception;
 
-import org.example.carservice.dto.SimpleErrorResponseDTO;
+import dto.SimpleErrorResponseDTO;
+import exception.BadRequestException;
+import exception.NotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +38,22 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage())
         );
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<SimpleErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = "Ошибка целостности данных";
+
+        if (ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException constraintEx) {
+            String constraintName = constraintEx.getConstraintName();
+            if ("uc_cars_licenseplatenumber".equals(constraintName)) {
+                message = "Автомобиль с таким номером уже существует";
+            }
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new SimpleErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), message));
     }
 
 

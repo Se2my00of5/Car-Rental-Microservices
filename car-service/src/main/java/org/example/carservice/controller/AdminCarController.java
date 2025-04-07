@@ -1,5 +1,6 @@
 package org.example.carservice.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.example.carservice.dto.CarDTO;
 import org.example.carservice.service.CarService;
@@ -12,18 +13,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/car")
+@RequestMapping("/admin/car")
 @RequiredArgsConstructor
-public class CarController {
+public class AdminCarController {
 
     private final CarService carService;
 
     @PostMapping
     @Operation(summary = "Добавление нового автомобиля", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<CarDTO.Response.FullInfo> createCar(
+            @Parameter(hidden = true) @RequestHeader("Authorization") String authHeader,
             @RequestBody @Valid CarDTO.Request.Create request
     ) {
-        return ResponseEntity.ok(carService.createCar(request));
+        return ResponseEntity.ok(carService.createCar(authHeader, request));
     }
 
     @PutMapping("/{id}")
@@ -35,22 +37,12 @@ public class CarController {
         return ResponseEntity.ok(carService.updateCar(id, request));
     }
 
-    @GetMapping
-    @Operation(summary = "Получение списка всех автомобилей", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<List<CarDTO.Response.FullInfo>> getAllCars() {
-        return ResponseEntity.ok(carService.getAllCars());
-    }
-
-    @GetMapping("/available")
-    @Operation(summary = "Получение списка доступных для аренды автомобилей", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<List<CarDTO.Response.FullInfo>> getAvailableCars() {
-        return ResponseEntity.ok(carService.getAvailableCars());
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Получение информации об автомобиле по ID", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<CarDTO.Response.FullInfo> getCarById(@PathVariable Long id) {
-        return ResponseEntity.ok(carService.getCarById(id));
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Удаление автомобиля", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<CarDTO.Response.SimpleRequest> deleteCar(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(carService.deleteCar(id));
     }
 
     @PatchMapping("/{id}/repair")

@@ -1,11 +1,11 @@
 package org.example.userservice.service;
 
+import exception.AuthenticationException;
+import exception.BadRequestException;
+import exception.NotFoundException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.example.userservice.dto.UserDTO;
-import org.example.userservice.exception.AuthenticationException;
-import org.example.userservice.exception.BadRequestException;
-import org.example.userservice.exception.NotFoundException;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.RoleRepository;
 import org.example.userservice.repository.UserRepository;
@@ -92,7 +92,7 @@ public class AuthService {
     }
 
     public UserDTO.Response.GetMessage deactivateAccount(String authHeader) {
-        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));
+        String email = jwtProvider.getEmailFromAuthHeader(authHeader);
 
         final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -104,7 +104,7 @@ public class AuthService {
     }
 
     public UserDTO.Response.GetMessage logout(String authHeader) {
-        String email = jwtProvider.getEmail(jwtProvider.getTokenFromAuthHeader(authHeader));
+        String email = jwtProvider.getEmailFromAuthHeader(authHeader);
 
         refreshStorage.remove(email);
 

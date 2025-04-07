@@ -1,9 +1,10 @@
 package org.example.userservice.service;
 
+import exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.example.userservice.dto.UserDTO;
-import org.example.userservice.exception.NotFoundException;
+
 import org.example.userservice.model.Role;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.RoleRepository;

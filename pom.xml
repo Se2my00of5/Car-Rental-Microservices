@@ -15,6 +15,7 @@
         <module>api-gateway</module>
         <module>user-service</module>
         <module>car-service</module>
+        <module>common</module>
     </modules>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

@@ -1,4 +1,4 @@
-package org.example.carservice.exception;
+package exception;
 
 // 400 - Bad Request
 public class BadRequestException extends RuntimeException {

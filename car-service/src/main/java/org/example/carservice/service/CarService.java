@@ -1,11 +1,10 @@
 package org.example.carservice.service;
 
+import exception.NotFoundException;
 import org.example.carservice.dto.CarDTO;
-import org.example.carservice.exception.NotFoundException;
 import org.example.carservice.model.Car;
 import org.example.carservice.model.CarStatus;
 import org.example.carservice.repository.CarRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +18,17 @@ import static java.util.stream.Collectors.toList;
 public class CarService {
 
     private final CarRepository carRepository;
+    private final JwtProvider jwtProvider;
 
-    public CarDTO.Response.FullInfo createCar(CarDTO.Request.Create request) {
+    public CarDTO.Response.FullInfo createCar(String authHeader,CarDTO.Request.Create request) {
         Car car = Car.builder()
                 .brand(request.getBrand())
                 .model(request.getModel())
                 .color(request.getColor())
                 .year(request.getYear())
-                .status(request.getStatus())
-                .userEmail(request.getUserEmail())
-                .createdAt(LocalDateTime.now())
+                .status(CarStatus.AVAILABLE)
+                .userEmail(jwtProvider.getEmailFromAuthHeader(authHeader))
+                .licensePlateNumber(request.getLicensePlateNumber())
                 .build();
 
         car = carRepository.save(car);
@@ -42,7 +42,7 @@ public class CarService {
         car.setModel(request.getModel());
         car.setColor(request.getColor());
         car.setYear(request.getYear());
-        car.setStatus(request.getStatus());
+        car.setLicensePlateNumber(request.getLicensePlateNumber());
 
         car = carRepository.save(car);
         return toDto(car);
@@ -79,6 +79,11 @@ public class CarService {
         return toDto(car);
     }
 
+    public CarDTO.Response.SimpleRequest deleteCar(Long id) {
+        getCarOrThrow(id);
+        carRepository.deleteById(id);
+        return new CarDTO.Response.SimpleRequest("success");
+    }
     // ==================== Вспомогательные методы ====================
 
     private Car getCarOrThrow(Long id) {
@@ -93,10 +98,13 @@ public class CarService {
                 car.getModel(),
                 car.getColor(),
                 car.getYear(),
+                car.getLicensePlateNumber(),
                 car.getStatus(),
                 car.getUserEmail(),
                 car.getCreatedAt(),
                 car.getUpdatedAt()
         );
     }
+
+
 }

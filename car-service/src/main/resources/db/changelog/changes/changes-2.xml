@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Здесь будут изменения -->
+
+    <changeSet id="1744025923740-2" author="Se2my00of5">
+        <addColumn tableName="cars">
+            <column name="license_plate_number" type="VARCHAR(7)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1744025923740-3" author="Se2my00of5">
+        <addNotNullConstraint columnName="license_plate_number" tableName="cars"/>
+    </changeSet>
+    <changeSet id="1744025923740-4" author="Se2my00of5">
+        <addUniqueConstraint columnNames="license_plate_number" constraintName="uc_cars_licenseplatenumber"
+                             tableName="cars"/>
+    </changeSet>
+    <changeSet id="1744025923740-1" author="Se2my00of5">
+        <dropNotNullConstraint columnDataType="datetime" columnName="created_at" tableName="cars"/>
+    </changeSet>
+</databaseChangeLog>
