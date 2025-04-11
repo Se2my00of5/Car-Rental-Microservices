@@ -1,8 +1,9 @@
 package org.example.apigateway.exception;
 
-import dto.SimpleErrorResponseDTO;
-import exception.AuthenticationException;
-import exception.ForbiddenException;
+
+import org.example.commonservice.dto.SimpleErrorResponseDTO;
+import org.example.commonservice.exception.AuthenticationException;
+import org.example.commonservice.exception.ForbiddenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

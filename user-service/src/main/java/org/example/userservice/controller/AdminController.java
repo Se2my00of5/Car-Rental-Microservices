@@ -3,7 +3,8 @@ package org.example.userservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.example.userservice.dto.UserDTO;
+
+import org.example.commonservice.dto.UserDTO;
 import org.example.userservice.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

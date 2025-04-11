@@ -1,13 +1,13 @@
 package org.example.userservice.service;
 
 import io.jsonwebtoken.*;
+import org.example.commonservice.service.JwtProviderBasic;
 import org.example.userservice.model.RefreshToken;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import service.JwtProviderBasic;
 
 import java.time.Instant;
 import java.util.Date;
