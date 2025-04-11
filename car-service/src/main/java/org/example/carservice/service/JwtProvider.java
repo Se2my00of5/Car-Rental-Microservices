@@ -1,8 +1,8 @@
 package org.example.carservice.service;
 
+import org.example.commonservice.service.JwtProviderBasic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import service.JwtProviderBasic;
 
 @Component
 public class JwtProvider extends JwtProviderBasic {

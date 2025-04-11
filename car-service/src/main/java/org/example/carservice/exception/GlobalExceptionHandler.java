@@ -1,8 +1,9 @@
 package org.example.carservice.exception;
 
-import dto.SimpleErrorResponseDTO;
-import exception.BadRequestException;
-import exception.NotFoundException;
+
+import org.example.commonservice.dto.SimpleErrorResponseDTO;
+import org.example.commonservice.exception.BadRequestException;
+import org.example.commonservice.exception.NotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

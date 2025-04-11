@@ -2,15 +2,13 @@ package org.example.carservice.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.example.carservice.dto.CarDTO;
 import org.example.carservice.service.CarService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.commonservice.dto.CarDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin/car")
@@ -45,15 +43,9 @@ public class AdminCarController {
         return ResponseEntity.ok(carService.deleteCar(id));
     }
 
-    @PatchMapping("/{id}/repair")
-    @Operation(summary = "Перевести автомобиль в статус 'на ремонте'", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<CarDTO.Response.FullInfo> markAsInRepair(@PathVariable Long id) {
-        return ResponseEntity.ok(carService.markAsInRepair(id));
-    }
-
-    @PatchMapping("/{id}/available")
-    @Operation(summary = "Перевести автомобиль в статус 'доступен'", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<CarDTO.Response.FullInfo> markAsAvailable(@PathVariable Long id) {
-        return ResponseEntity.ok(carService.markAsAvailable(id));
+    @PutMapping("/{id}/status")
+    @Operation(summary = "Изменить статус автомобиля", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<CarDTO.Response.FullInfo> editStatus(@PathVariable Long id, @RequestBody CarDTO.Request.UpdateStatus status) {
+        return ResponseEntity.ok(carService.editStatus(id, status));
     }
 }

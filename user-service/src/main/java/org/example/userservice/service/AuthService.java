@@ -1,11 +1,11 @@
 package org.example.userservice.service;
 
-import exception.AuthenticationException;
-import exception.BadRequestException;
-import exception.NotFoundException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.example.userservice.dto.UserDTO;
+import org.example.commonservice.dto.UserDTO;
+import org.example.commonservice.exception.AuthenticationException;
+import org.example.commonservice.exception.BadRequestException;
+import org.example.commonservice.exception.NotFoundException;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.RoleRepository;
 import org.example.userservice.repository.UserRepository;

@@ -2,10 +2,11 @@ package org.example.apigateway.service;
 
 
 import io.jsonwebtoken.*;
-import org.example.apigateway.dto.Role;
+import org.example.commonservice.dto.Role;
+import org.example.commonservice.service.JwtProviderBasic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import service.JwtProviderBasic;
+
 
 import java.util.LinkedHashMap;
 import java.util.List;

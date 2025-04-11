@@ -1,9 +1,10 @@
 package org.example.userservice.service;
 
-import exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.example.userservice.dto.UserDTO;
+import org.example.commonservice.dto.UserDTO;
+import org.example.commonservice.exception.NotFoundException;
+import org.example.userservice.mapper.UserMapper;
 import org.example.userservice.model.User;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,11 @@ public class UserService {
 
         final User user = repository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+
         return new UserDTO.Response.Profile(
                 user.getId(), user.getUsername(), user.getEmail(),
-                user.getPassword(), user.getRoles()
+                user.getPassword(), UserMapper.RolesToRoleDTO(user.getRoles())
         );
     }
 
@@ -40,7 +43,7 @@ public class UserService {
 
         return new UserDTO.Response.Profile(
                 user.getId(), user.getUsername(), user.getEmail(),
-                user.getPassword(), user.getRoles()
+                user.getPassword(), UserMapper.RolesToRoleDTO(user.getRoles())
         );
 
     }
@@ -51,7 +54,7 @@ public class UserService {
 
         return new UserDTO.Response.Profile(
                 user.getId(), user.getUsername(), user.getEmail(),
-                user.getPassword(), user.getRoles()
+                user.getPassword(), UserMapper.RolesToRoleDTO(user.getRoles())
         );
     }
 

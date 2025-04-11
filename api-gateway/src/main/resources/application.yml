@@ -10,6 +10,24 @@ spring:
         locator:
           lower-case-service-id: true
       routes:
+        - id: admin-booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/booking-service/admin/**
+          filters:
+            - JwtCheck
+            - AdminRoleCheck
+
+        - id: booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/booking-service/**
+          filters:
+            - JwtCheck
+          metadata:
+            publicPaths:
+              - /booking-service/v3/api-docs
+
         - id: admin-user-service
           uri: lb://user-service
           predicates:
@@ -68,6 +86,8 @@ springdoc:
         url: /user-service/v3/api-docs
       - name: car-service
         url: /car-service/v3/api-docs
+      - name: booking-service
+        url: /booking-service/v3/api-docs
   api-docs:
     enabled: true
   cache:

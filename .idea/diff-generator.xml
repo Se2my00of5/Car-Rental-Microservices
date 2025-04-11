@@ -4,7 +4,7 @@
     <option name="initGenerateDdl" value="true" />
     <option name="snapshotDb" value="false" />
     <option name="snapshotModelValue" value="car-service:car-service" />
-    <option name="sourceModelValue" value="car-service:car-service" />
-    <option name="targetDbValue" value="b032bf66-ceaf-4ffd-9eb2-f975f0d2cd8b" />
+    <option name="sourceModelValue" value="booking-service:entityManagerFactory" />
+    <option name="targetDbValue" value="e54db70e-ec2a-497d-aa70-acc90750826d" />
   </component>
 </project>

@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: booking-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/booking_db
+  config:
+    import:
+      - optional:configserver:http://localhost:8888/common-database
+      - optional:configserver:http://localhost:8888/common-client-service
+      - optional:configserver:http://localhost:8888/gateway-url
+      - optional:configserver:http://localhost:8888/jwt
+
+server:
+  servlet:
+    context-path: /booking-service
+
+springdoc:
+  api-docs:
+    path: v3/api-docs
+
+
+

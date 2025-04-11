@@ -1,11 +1,10 @@
 package org.example.carservice.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.example.carservice.dto.CarDTO;
 import org.example.carservice.service.CarService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.commonservice.dto.CarDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

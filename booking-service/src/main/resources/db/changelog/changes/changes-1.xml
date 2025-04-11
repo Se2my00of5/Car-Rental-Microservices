@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Здесь будут изменения -->
+
+
+    <changeSet id="1744372882527-1" author="Se2my00of5">
+        <createSequence incrementBy="50" sequenceName="bookings_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1744372882527-2" author="Se2my00of5">
+        <createTable tableName="bookings">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_bookings"/>
+            </column>
+            <column name="car_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_confirmed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="DATETIME"/>
+            <column name="end_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ended_at" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

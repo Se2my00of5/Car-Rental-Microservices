@@ -1,10 +1,10 @@
 package org.example.apigateway.filter;
 
-import exception.ForbiddenException;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.example.apigateway.dto.Role;
 import org.example.apigateway.service.JwtProvider;
+import org.example.commonservice.dto.Role;
+import org.example.commonservice.exception.ForbiddenException;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
