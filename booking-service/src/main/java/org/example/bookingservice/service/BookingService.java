@@ -1,10 +1,8 @@
 package org.example.bookingservice.service;
 
-import dto.SimpleErrorResponseDTO;
 import exception.BadRequestException;
 import exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.example.bookingservice.client.CarServiceClient;
 import org.example.bookingservice.client.UserServiceClient;
@@ -14,11 +12,9 @@ import org.example.bookingservice.repository.BookingRepository;
 import org.example.commonservice.dto.BookingDTO;
 import org.example.commonservice.dto.CarDTO;
 import org.example.commonservice.dto.CarStatus;
-import org.example.commonservice.dto.UserDTO;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -64,8 +60,8 @@ public class BookingService {
     }
 
     // Завершение аренды
-    public BookingDTO.Response.Info completeRented(BookingDTO.Request.Complete request) {
-        Booking booking = bookingRepository.findById(request.getId())
+    public BookingDTO.Response.Info completeRented(Long id) {
+        Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
 
         if (!booking.isPaymentConfirmed()) {
@@ -97,15 +93,6 @@ public class BookingService {
                 .getBody()
                 .getId();
 
-//        List<Booking> bookings = bookingRepository.findByUserId(userId);
-//        log.info("bookings: {}", bookings);
-//        log.info("bookings[0].getId(): {}", bookings.getFirst().getId());
-//        List<BookingDTO.Response.Info> bookings1 = bookingRepository.findByUserId(userId).stream()
-//                .map(mapper -> bookingMapper.toResponseInfoDTO(mapper))
-//                .collect(Collectors.toList());
-
-        //log.info("bookings1[0].getId(): {}", bookings1.getFirst().getId());
-        //log.info("bookings1: {}", bookings1);
         return bookingRepository.findByUserId(userId).stream()
                 .map(bookingMapper::toResponseInfoDTO)
                 .collect(Collectors.toList());
@@ -119,5 +106,50 @@ public class BookingService {
                 .map(bookingMapper::toResponseInfoDTO)
                 .collect(Collectors.toList());
     }
-    
+
+    public BookingDTO.Response.Message checkCar(Long id) {
+        CarStatus status = carServiceClient.getCarById(id).getBody().getStatus();
+
+        String message = CarStatus.AVAILABLE == status ? "AVAILABLE" : "UNAVAILABLE";
+
+        return new BookingDTO.Response.Message(message);
+    }
+
+
+    // будет вызываться когда оплата не произошла за определённое время(отмена бронирования)
+    public BookingDTO.Response.Message deleteBooking(Long id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Бронирование с id " + id + " не найдено"));
+
+        bookingRepository.delete(booking);
+
+        carServiceClient.editStatus(booking.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.AVAILABLE));
+
+        return new BookingDTO.Response.Message("Бронирование успешно удалено");
+    }
+
+    @Scheduled(fixedRate = 60000)
+    @Transactional // завершает аренду, если время пришло и EndedAt = null
+    public void autoCompleteExpiredBookings() {
+        List<Booking> expiredBookings = bookingRepository.findByEndAtBeforeAndEndedAtIsNull(LocalDateTime.now());
+
+        for (Booking booking : expiredBookings) {
+            booking.setEndedAt(LocalDateTime.now());
+
+            carServiceClient.editStatus(booking.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.AVAILABLE));
+
+            bookingRepository.save(booking);
+        }
+    }
+
+    public BookingDTO.Response.Message startRentedBookingById(Long id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Бронирование с id " + id + " не найдено"));
+
+        booking.setPaymentConfirmed(true);
+
+        carServiceClient.editStatus(booking.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.RENTED));
+
+        return new BookingDTO.Response.Message("Аренда начата");
+    }
 }

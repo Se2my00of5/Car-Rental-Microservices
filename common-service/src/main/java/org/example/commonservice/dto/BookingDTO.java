@@ -41,7 +41,7 @@ public enum BookingDTO {
         ;
 
         @Value
-        public static class Info implements Id, CarId, UserId, PaymentConfirmed, CreatedAt, EndAt, EndedAt {
+        public static class Info implements Id, CarId, UserId, PaymentId, PaymentConfirmed, CreatedAt, EndAt, EndedAt {
 
             @NotNull
             @Schema(description = "ID бронирования", example = "1")
@@ -54,6 +54,10 @@ public enum BookingDTO {
             @NotNull
             @Schema(description = "ID пользователя", example = "202")
             Long userId;
+
+            @NotNull
+            @Schema(description = "ID платежа", example = "202")
+            Long paymentId;
 
             @NotNull
             @Schema(description = "Подтвержден ли платёж", example = "true")
@@ -87,13 +91,15 @@ public enum BookingDTO {
     }
 
     private interface CarId {
-        @Positive
         Long getCarId();
     }
 
     private interface UserId {
-        @Positive
         Long getUserId();
+    }
+
+    private interface PaymentId {
+        Long getPaymentId();
     }
 
     private interface EndAt {

@@ -8,7 +8,12 @@
     <!-- Здесь будут изменения -->
 
 
-
-
-
+    <changeSet id="1744454309359-1" author="Se2my00of5">
+        <addColumn tableName="bookings">
+            <column name="payment_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1744454309359-2" author="Se2my00of5">
+        <addNotNullConstraint columnName="payment_id" tableName="bookings"/>
+    </changeSet>
 </databaseChangeLog>

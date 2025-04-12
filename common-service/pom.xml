@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>common-service</name>
     <description>common-service</description>
+    <packaging>jar</packaging>
     <url/>
     <licenses>
         <license/>

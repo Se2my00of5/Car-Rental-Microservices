@@ -29,6 +29,10 @@ public class Booking {
 
     @NotNull
     @Column(nullable = false)
+    private Long paymentId;
+
+    @NotNull
+    @Column(nullable = false)
     private boolean paymentConfirmed;
 
     @CreationTimestamp

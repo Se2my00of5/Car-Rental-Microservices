@@ -30,12 +30,20 @@ public class UserBookingController {
                 .body(bookingService.createBooking(authHeader, request));
     }
 
-    @PostMapping("/complete")
+    @GetMapping("/check/car/{id}")
+    @Operation(summary = "Проверить машину на доступность", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<BookingDTO.Response.Message> checkCar(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(bookingService.checkCar(id));
+    }
+
+    @PostMapping("{id}/complete")
     @Operation(summary = "Завершить аренду", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<BookingDTO.Response.Info> completeRented(
-            @Valid @RequestBody BookingDTO.Request.Complete request
+            @PathVariable Long id
     ) {
-        return ResponseEntity.ok(bookingService.completeRented(request));
+        return ResponseEntity.ok(bookingService.completeRented(id));
     }
 
     @GetMapping("/user")

@@ -18,8 +18,26 @@ public class AdminBookingController {
 
     private final BookingService bookingService;
 
+    @DeleteMapping("{id}")
+    @Operation(summary = "Удаление записи аренды", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<BookingDTO.Response.Message> deleteBooking(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(bookingService.deleteBooking(id));
+    }
+
+    @PostMapping("{id}/pay")
+    @Operation(summary = "Подтвердить оплату аренды", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<BookingDTO.Response.Message> startRentedBookingById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(bookingService.startRentedBookingById(id));
+    }
+
+
+
     @GetMapping("/car/{carId}")
-    @Operation(summary = "История аренды автомобиля (для админа)", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "История аренды автомобиля", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<BookingDTO.Response.Info>> getCarBookings(
             @PathVariable Long carId
     ) {
@@ -33,4 +51,6 @@ public class AdminBookingController {
     ) {
         return ResponseEntity.ok(bookingService.getUserBookingsById(userId));
     }
+
+
 }
