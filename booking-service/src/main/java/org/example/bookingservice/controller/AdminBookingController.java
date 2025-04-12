@@ -21,9 +21,16 @@ public class AdminBookingController {
     @GetMapping("/car/{carId}")
     @Operation(summary = "История аренды автомобиля (для админа)", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<BookingDTO.Response.Info>> getCarBookings(
-            @PathVariable Long carId,
-            @RequestParam(defaultValue = "false") boolean isAdmin
+            @PathVariable Long carId
     ) {
-        return ResponseEntity.ok(bookingService.getCarBookings(carId, isAdmin));
+        return ResponseEntity.ok(bookingService.getCarBookings(carId));
+    }
+
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "История аренды пользователя", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<List<BookingDTO.Response.Info>> getUserBookings(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity.ok(bookingService.getUserBookingsById(userId));
     }
 }

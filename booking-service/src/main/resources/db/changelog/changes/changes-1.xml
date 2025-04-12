@@ -32,4 +32,6 @@
             <column name="ended_at" type="DATETIME"/>
         </createTable>
     </changeSet>
+
+
 </databaseChangeLog>

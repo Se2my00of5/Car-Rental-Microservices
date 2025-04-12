@@ -32,7 +32,6 @@ public enum BookingDTO {
         public static class Complete implements Id {
 
             @NotNull
-            @Positive
             @Schema(description = "ID бронирования", example = "1")
             Long id;
         }
@@ -84,7 +83,6 @@ public enum BookingDTO {
     // ======= Общие интерфейсы для полей DTO =======
 
     private interface Id {
-        @Positive
         Long getId();
     }
 

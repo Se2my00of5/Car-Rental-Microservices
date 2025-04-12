@@ -38,13 +38,12 @@ public class UserBookingController {
         return ResponseEntity.ok(bookingService.completeRented(request));
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     @Operation(summary = "История аренды пользователя", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<BookingDTO.Response.Info>> getUserBookings(
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "false") boolean isAdmin
+            @Parameter(hidden = true) @RequestHeader("Authorization") String authHeader
     ) {
-        return ResponseEntity.ok(bookingService.getUserBookings(userId, isAdmin));
+        return ResponseEntity.ok(bookingService.getUserBookings(authHeader));
     }
 
 }

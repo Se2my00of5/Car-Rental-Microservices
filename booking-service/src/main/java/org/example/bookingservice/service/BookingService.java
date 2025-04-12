@@ -1,5 +1,6 @@
 package org.example.bookingservice.service;
 
+import dto.SimpleErrorResponseDTO;
 import exception.BadRequestException;
 import exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,10 @@ import org.example.bookingservice.repository.BookingRepository;
 import org.example.commonservice.dto.BookingDTO;
 import org.example.commonservice.dto.CarDTO;
 import org.example.commonservice.dto.CarStatus;
+import org.example.commonservice.dto.UserDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,10 +37,13 @@ public class BookingService {
 
     // Создание бронирования
     public BookingDTO.Response.Info createBooking(String authHeader, BookingDTO.Request.Create request) {
-        CarStatus carStatus = carServiceClient.getCarById(request.getCarId()).getBody().getStatus();
+        CarStatus carStatus = carServiceClient
+                .getCarById(request.getCarId())
+                .getBody()
+                .getStatus();
 
         if (carStatus != CarStatus.AVAILABLE) {
-            throw new RuntimeException("Машина недоступна для бронирования");
+            throw new BadRequestException("Машина недоступна для бронирования");
         }
 
         // Переводим в статус "Забронировано"
@@ -73,20 +81,43 @@ public class BookingService {
         return bookingMapper.toResponseInfoDTO(booking);
     }
 
+    // История бронирований пользователя с id
+    public List<BookingDTO.Response.Info> getUserBookingsById(Long userId) {
+        userServiceClient.getProfileById(userId);
+
+        return bookingRepository.findByUserId(userId).stream()
+                .map(bookingMapper::toResponseInfoDTO)
+                .collect(Collectors.toList());
+    }
+
     // История бронирований пользователя
-    public List<BookingDTO.Response.Info> getUserBookings(Long userId, boolean isAdmin) {
-        // Любой пользователь может смотреть свою историю
+    public List<BookingDTO.Response.Info> getUserBookings(String authHeader) {
+        Long userId = userServiceClient
+                .getMyProfile(authHeader)
+                .getBody()
+                .getId();
+
+//        List<Booking> bookings = bookingRepository.findByUserId(userId);
+//        log.info("bookings: {}", bookings);
+//        log.info("bookings[0].getId(): {}", bookings.getFirst().getId());
+//        List<BookingDTO.Response.Info> bookings1 = bookingRepository.findByUserId(userId).stream()
+//                .map(mapper -> bookingMapper.toResponseInfoDTO(mapper))
+//                .collect(Collectors.toList());
+
+        //log.info("bookings1[0].getId(): {}", bookings1.getFirst().getId());
+        //log.info("bookings1: {}", bookings1);
         return bookingRepository.findByUserId(userId).stream()
                 .map(bookingMapper::toResponseInfoDTO)
                 .collect(Collectors.toList());
     }
 
     // История бронирований автомобиля (только для админа)
-    public List<BookingDTO.Response.Info> getCarBookings(Long carId, boolean isAdmin) {
+    public List<BookingDTO.Response.Info> getCarBookings(Long carId) {
+        carServiceClient.getCarById(carId);
 
         return bookingRepository.findByCarId(carId).stream()
                 .map(bookingMapper::toResponseInfoDTO)
                 .collect(Collectors.toList());
     }
-
+    
 }
