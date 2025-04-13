@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.commonservice.kafka.MultiProducer;
 import org.example.bookingservice.service.BookingService;
 import org.example.commonservice.dto.BookingDTO;
+import org.example.commonservice.dto.KafkaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.util.List;
 public class UserBookingController {
 
     private final BookingService bookingService;
+    private final MultiProducer multiProducer;
 
     @PostMapping
     @Operation(summary = "Создать бронирование", security = @SecurityRequirement(name = "bearerAuth"))
@@ -52,6 +55,17 @@ public class UserBookingController {
             @Parameter(hidden = true) @RequestHeader("Authorization") String authHeader
     ) {
         return ResponseEntity.ok(bookingService.getUserBookings(authHeader));
+    }
+
+
+
+    @PostMapping("/kafka")
+    @Operation(summary = "отправить смс", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<String> postKafka(
+            @RequestBody KafkaDTO.MessageInTopic messageInTopic
+            ) {
+        multiProducer.sendString(messageInTopic.getTopic(), messageInTopic.getMessage());
+        return ResponseEntity.ok("");
     }
 
 }

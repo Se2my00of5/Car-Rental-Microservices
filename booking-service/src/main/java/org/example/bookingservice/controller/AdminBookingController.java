@@ -19,7 +19,7 @@ public class AdminBookingController {
     private final BookingService bookingService;
 
     @DeleteMapping("{id}")
-    @Operation(summary = "Удаление записи аренды", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Удаление записи бронирования", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<BookingDTO.Response.Message> deleteBooking(
             @PathVariable Long id
     ) {

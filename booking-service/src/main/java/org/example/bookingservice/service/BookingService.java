@@ -12,13 +12,18 @@ import org.example.bookingservice.repository.BookingRepository;
 import org.example.commonservice.dto.BookingDTO;
 import org.example.commonservice.dto.CarDTO;
 import org.example.commonservice.dto.CarStatus;
+import org.example.commonservice.dto.KafkaDTO;
+import org.example.commonservice.kafka.MultiProducer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
 @Slf4j
 @Service
@@ -30,8 +35,10 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     //private final JwtProvider jwtProvider;
     private final BookingMapper bookingMapper;
+    private final MultiProducer multiProducer;
 
     // Создание бронирования
+    @Transactional
     public BookingDTO.Response.Info createBooking(String authHeader, BookingDTO.Request.Create request) {
         CarStatus carStatus = carServiceClient
                 .getCarById(request.getCarId())
@@ -45,12 +52,25 @@ public class BookingService {
         // Переводим в статус "Забронировано"
         carServiceClient.editStatus(request.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.BOOKED));
 
+        // отправляем смс в кафку
+        multiProducer.sendChangeRentStatus(
+                "booking",
+                KafkaDTO.ChangeRentStatus
+                        .builder()
+                        .carId(request.getCarId())
+                        .carStatus(CarStatus.BOOKED)
+                        .message("Машина с id = " + request.getCarId() + " зарезервирована")
+                        .build()
+        );
+
         Booking booking = Booking.builder()
                 .carId(request.getCarId())
                 .userId(userServiceClient.getMyProfile(authHeader).getBody().getId())
+                .paymentId(Long.valueOf(new Random().nextInt(1000000) + 1)) //доделать
                 .endAt(request.getEndAt())
                 .paymentConfirmed(false)
                 .build();
+
 
         booking = bookingRepository.save(booking);
 
@@ -60,6 +80,7 @@ public class BookingService {
     }
 
     // Завершение аренды
+    @Transactional
     public BookingDTO.Response.Info completeRented(Long id) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
@@ -71,6 +92,17 @@ public class BookingService {
         booking.setEndedAt(LocalDateTime.now());
 
         carServiceClient.editStatus(booking.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.AVAILABLE));
+
+        // отправляем смс в кафку
+        multiProducer.sendChangeRentStatus(
+                "booking",
+                KafkaDTO.ChangeRentStatus
+                        .builder()
+                        .carId(booking.getCarId())
+                        .carStatus(CarStatus.AVAILABLE)
+                        .message("Аренда окончена. Машина с id = " + booking.getCarId() + " доступна")
+                        .build()
+        );
 
         bookingRepository.save(booking);
 
@@ -117,6 +149,7 @@ public class BookingService {
 
 
     // будет вызываться когда оплата не произошла за определённое время(отмена бронирования)
+    @Transactional
     public BookingDTO.Response.Message deleteBooking(Long id) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование с id " + id + " не найдено"));
@@ -124,6 +157,17 @@ public class BookingService {
         bookingRepository.delete(booking);
 
         carServiceClient.editStatus(booking.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.AVAILABLE));
+
+        // отправляем смс в кафку
+        multiProducer.sendChangeRentStatus(
+                "booking",
+                KafkaDTO.ChangeRentStatus
+                        .builder()
+                        .carId(booking.getCarId())
+                        .carStatus(CarStatus.AVAILABLE)
+                        .message("Время подтверждения брони истекло. Машина с id = " + booking.getCarId() + " доступна")
+                        .build()
+        );
 
         return new BookingDTO.Response.Message("Бронирование успешно удалено");
     }
@@ -138,17 +182,41 @@ public class BookingService {
 
             carServiceClient.editStatus(booking.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.AVAILABLE));
 
+            // отправляем смс в кафку
+            multiProducer.sendChangeRentStatus(
+                    "booking",
+                    KafkaDTO.ChangeRentStatus
+                            .builder()
+                            .carId(booking.getCarId())
+                            .carStatus(CarStatus.AVAILABLE)
+                            .message("Аренда окончена. Машина с id = " + booking.getCarId() + " доступна")
+                            .build()
+            );
+
             bookingRepository.save(booking);
         }
     }
 
+    @Transactional
     public BookingDTO.Response.Message startRentedBookingById(Long id) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирование с id " + id + " не найдено"));
 
         booking.setPaymentConfirmed(true);
+        bookingRepository.save(booking);
 
         carServiceClient.editStatus(booking.getCarId(), new CarDTO.Request.UpdateStatus(CarStatus.RENTED));
+
+        // отправляем смс в кафку
+        multiProducer.sendChangeRentStatus(
+                "booking",
+                KafkaDTO.ChangeRentStatus
+                        .builder()
+                        .carId(booking.getCarId())
+                        .carStatus(CarStatus.RENTED)
+                        .message("Бронирование оплачено. Машина с id = " + booking.getCarId() + " арендована")
+                        .build()
+        );
 
         return new BookingDTO.Response.Message("Аренда начата");
     }
